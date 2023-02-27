@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <br>
+    <br>
+    <div class="card">
+        <div class="card-header">
+            <p style="color: white;"><b>Datos del Prestamo</b></p>
+        </div>
+        <div class="card">
+            <h5 class="card-title"></h5>
+            <p class="card-text">
+                <form action="/add_equipment" method="POST" >
+                        <div class="form-group">
+                            <label for="numempleado">Numero de Empleado</label>
+                            <input type="text" name="numempleado" id="numempleado" required pattern="[0-9]+"title="Solo Numeros" class="form-control">
+                            <p></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" name="usuario" id="nombre" required pattern="[A-ZÑa-zñáéíóúÁÉÍÓÚ'° ]+$" title="Solo Letras" class="form-control">
+                            <p></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="accesorio">Accesorio</label>
+                            <input type="text" name="accesorio" id="accesorio" required class="form-control">
+                            <p></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcion">Nombre/Numero de Serie</label>
+                            <input type="text" name="descripcion" id="descripcion" required class="form-control">
+                            <p></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaR">Fecha de Retorno</label>
+                            <input type="date" name="fechaR" id="fechaR" required class="form-control">
+                            <p></p>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            Guardar
+                        </button> 
+                        <a href="/" class="btn btn-danger btn-lg">Cancelar</a>   
+                </form> 
+            </p>
+        </div>
+    </div>
+{% endblock %}

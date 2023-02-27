@@ -1,0 +1,4 @@
+.form-control.falla input {
+    border: 0.1px solid;
+    border-color: red;
+}
