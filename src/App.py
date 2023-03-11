@@ -1,20 +1,26 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
+from config import config
+from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_wtf.csrf import CSRFProtect
+from models.ModelUser import ModelUser
+
+from models.entities.User import User
 
 app = Flask(__name__)
 
+app.secret_key = 'WKv&bB9w^*9fW%HjojCZ%8vUnxg6'
 # conexion mysql
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'prestamo'
 mysql = MySQL(app)
 
-# configuraciones
-app.secret_key = 'WKv&bB9w^*9fW%HjojCZ%8vUnxg6'
-
+csrf = CSRFProtect()
+login_manager_app = LoginManager(app)
+@login_manager_app.user_loader
+def load_user(id):
+    return ModelUser.get_by_id(mysql,id)
 
 @app.route('/')
+@login_required
 def Index():
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM contacts')
@@ -23,6 +29,7 @@ def Index():
 
 
 @app.route('/add_equipment', methods=['POST'])
+@login_required
 def add_equipment():
     if request.method == 'POST':
         numempleado = request.form['numempleado']
@@ -39,6 +46,7 @@ def add_equipment():
 
 
 @app.route('/edit/<id>')
+@login_required
 def get_equipment(id):
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM contacts WHERE id = %s', (id,))
@@ -47,18 +55,19 @@ def get_equipment(id):
 
 
 @app.route('/update/<id>', methods=['POST'])
+@login_required
 def update_equipmentt(id):
     if request.method == 'POST':
         fechaR = request.form['fechaR']
         cur = mysql.connection.cursor()
-        cur.execute(
-            'UPDATE contacts SET fechaR = %s WHERE id = %s', (fechaR, id))
+        cur.execute('UPDATE contacts SET fechaR = %s WHERE id = %s', (fechaR, id))
         mysql.connection.commit()
         flash('Fecha de Retorno Cambiado')
         return redirect(url_for('Index'))
 
 
 @app.route('/reporte')
+@login_required
 def reporte():
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM contacts')
@@ -67,6 +76,7 @@ def reporte():
 
 
 @app.route('/delete/<string:id>')
+@login_required
 def delete_equipment(id):
     status = 1
     cur = mysql.connection.cursor()
@@ -77,9 +87,44 @@ def delete_equipment(id):
 
 
 @app.route('/add-equipment')
+@login_required
 def addequipment():
     return render_template('add-equipment.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = User(0, request.form['username'], request.form['password'])
+        logged_user = ModelUser.login(mysql, user)
+        if logged_user != None:
+            if logged_user.password:
+                login_user(logged_user)
+                return redirect(url_for('Index'))
+            else:
+                flash("Contraseña Invalida.")
+                return render_template('login.html')
+        else:
+            flash("Usuario no encontrado.")
+            return render_template('login.html')
+    else:
+        return render_template('login.html')
+    
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/protected')
+@login_required
+def status_401(erro):
+    return redirect(url_for('login'))
+def status_404(error):
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
+    app.config.from_object(config['development'])
+    csrf.init_app(app)
+    app.register_error_handler(401, status_401)
+    app.register_error_handler(404, status_404)
     app.run(port=3000, debug=True)

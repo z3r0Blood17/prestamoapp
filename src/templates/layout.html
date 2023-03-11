@@ -9,8 +9,6 @@
       filename='css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{ url_for('static',
       filename='css/bootswatch.min.css')}}">
-    <link rel="stylesheet" href="{{ url_for('static',
-      filename='css/style.css')}}">
 
     <!-- scripts -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -42,11 +40,11 @@
         </div>
       </div>
     </nav>
-
-    <div class="container pt-2">
-      {% block body %}
-      {% endblock %}
-    </div>
-
-  </body>
+    <body>
+      <div class="container pt-2">
+        {% block body %}
+        {% endblock %}
+      </div>
+    </body>
+  </head>
 </html>
