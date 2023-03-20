@@ -4,7 +4,6 @@ from config import config
 from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_wtf.csrf import CSRFProtect
 from models.ModelUser import ModelUser
-
 from models.entities.User import User
 
 app = Flask(__name__)
@@ -115,16 +114,11 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route('/protected')
-@login_required
-def status_401(erro):
-    return redirect(url_for('login'))
-def status_404(error):
+@app.errorhandler(401)
+def not_found_endpoint(error):
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])
     csrf.init_app(app)
-    app.register_error_handler(401, status_401)
-    app.register_error_handler(404, status_404)
     app.run(port=3000, debug=True)
