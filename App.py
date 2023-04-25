@@ -121,4 +121,4 @@ def not_found_endpoint(error):
 if __name__ == '__main__':
     app.config.from_object(config['development'])
     csrf.init_app(app)
-    app.run(port=3000, debug=True)
+    app.run(port=3000)

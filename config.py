@@ -2,8 +2,8 @@ class DevelpmentConfig():
     DEBUG = True
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'root'
-    MYSQL_PASSWORD = 'root'
-    MYSQL_DB = 'prestamo'
+    MYSQL_PASSWORD = ''
+    MYSQL_DB = 'collinsAPP'
     
 
 config = {
